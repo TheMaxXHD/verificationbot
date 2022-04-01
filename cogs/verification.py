@@ -31,12 +31,14 @@ class Verification(commands.Cog):
 
 			self.role = os.environ["server_role"]
 			self.channel_id = os.environ["channel_id"]
+			self.welcome_id = os.environ["welcome_id"]
 			self.notify_id = os.environ["notify_id"]
 			self.admin_id = os.environ["admin_id"]
 			self.author_name = os.environ["author_name"]
 			self.webmail_link = os.environ["webmail_link"]
 
 			self.channel_id = int(self.channel_id)
+			self.welcome_id = int(self.welcome_id)
 			self.notify_id = int(self.notify_id)
 			self.admin_id = int(self.admin_id)
 			self.email_port = int(self.email_port)
@@ -217,7 +219,15 @@ class Verification(commands.Cog):
 
 			if self.token_list:
 				if self.token_list[ctx.author.id] == arg:
-					await ctx.send(f"Welcome{ctx.author.mention},<:4WE:494721524654145536> <:3ARE:494721824505200640> glad to have you here! Please assign yourself some roles in <#778461097488810015>, hop right in to <#354465848729141250>, or introduce yourself in <#811815122124800012> on the way there. Enjoy your stay! <:were:637756006880772126>")
+					sendIn = ctx.guild.get_channel(self.welcome_id) # Checks for dedicated verified welcome message channel.
+					#Line below sends welcome message to dedicated welcome channel after successful verification.
+					await sendIn.send(f"Welcome{ctx.author.mention},<:4WE:494721524654145536> <:3ARE:494721824505200640> "
+					"glad to have you here! Please assign yourself some roles in <#778461097488810015>, hop right in to "
+					"<#354465848729141250>, or introduce yourself in <#811815122124800012> on the way there. Enjoy your stay! "
+					"<:were:637756006880772126>")
+					
+					# Line below is commented out, original implementation. Unused in current implementation. Sends verified message to same channel verified command is sent.
+					"""await ctx.send(f"{ctx.author.mention}, you've been verified!")"""
 
 					role = discord.utils.get(ctx.guild.roles, name=self.role)
 					if not role:

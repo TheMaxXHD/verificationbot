@@ -35,6 +35,8 @@ services:
       - server_role=
       # The channel id for the verification channel.
       - channel_id=
+      # The channel id for a dedicated welcome channel after successful verification.
+      - welcome_id=
       # The channel id for a channel for bot alerts (i.e. mod-only)
       - notify_id=
       # The user id for a user to ping if an email is already used
