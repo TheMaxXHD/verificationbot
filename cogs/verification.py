@@ -153,10 +153,10 @@ class Verification(commands.Cog):
 					self.email_list[ctx.author.id] = arg
 					verify_email = ctx.guild.get_channel(self.channel_id)
 
-					message_text = f"Hello {self.author_name}! Thank you for joining the ECS Discord Server! \n\n" \
+					message_text = f"Hello {self.author_name}! Thank you for joining the PSU Discord Server! \n\n" \
 						f"The command to use in the #{verify_email.name} channel is: {self.bot_key}verify {token}\n\n" \
 						f"You can copy and paste that command into the #{verify_email.name} channel to verify. \n\n" \
-						f"This message was sent by the UVic Engineering Bot. \n" \
+						f"This message was sent by the PSU Discord Email Bot. \n" \
 						f"If you did not request to verify, please contact {self.moderator_email} to let us know."
 					message = f"Subject: {self.email_subject}\n\n{message_text}"
 					server.sendmail(self.email_from, arg, message)
@@ -217,7 +217,7 @@ class Verification(commands.Cog):
 
 			if self.token_list:
 				if self.token_list[ctx.author.id] == arg:
-					await ctx.send(f"{ctx.author.mention}, you've been verified!")
+					await ctx.send(f"Welcome{ctx.author.mention},<:4WE:494721524654145536> <:3ARE:494721824505200640> glad to have you here! Please assign yourself some roles in <#778461097488810015>, hop right in to <#354465848729141250>, or introduce yourself in <#811815122124800012> on the way there. Enjoy your stay! <:were:637756006880772126>")
 
 					role = discord.utils.get(ctx.guild.roles, name=self.role)
 					if not role:
