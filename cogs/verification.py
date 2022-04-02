@@ -295,6 +295,70 @@ class Verification(commands.Cog):
 			print(f"User with id {userid} not found")
 			await ctx.send(f"{ctx.author.mention}, the user with id {userid} was not found.")
 
+	@commands.command(name="manual_email", aliases=["mod_email", "manualemail", "modemail"])
+	@commands.guild_only()
+	@commands.has_permissions(manage_messages=True)
+	async def _manual_email(self, ctx, arg):
+		if ctx.channel.id == self.channel_id:
+			print(f'Emailing user {ctx.author.name}, email {arg}')
+
+			try:
+				dm = arg.split('@')[1]  # split the string based on the @ symbol
+			except AttributeError:
+				await ctx.send("Error! That is not a valid email!")  # no @ symbol = no email
+				return
+
+			if not is_valid_email(arg):
+				return await ctx.send("Error! That is not a valid email!")
+
+			blacklist_names = [self.sample_username]  # If any email begins with one of these, it's invalid
+
+			if any(arg.lower().startswith(name.lower()) for name in blacklist_names):
+				await ctx.send(
+					f"{ctx.author.mention} Use a unique email, not the sample one. Please try again with a valid email.")
+				return
+
+			try:
+				with open(self.used_emails, 'r') as file:  # Checks the used emails file to see if the email has been used.
+					if any(self.bot.hashing.check_hash(str(arg.lower()), str(line).strip('\n')) for line in file):
+						admin = await self.bot.fetch_user(self.admin_id)
+						await ctx.send(
+							f"Error! That email has already been used! If you believe this is an error or are trying to "
+							f"re-verify, please contact {admin.mention} in this channel or through direct message. Thanks!")
+						file.close()
+						return
+					file.close()
+			except FileNotFoundError:
+				print("Used emails file hasn't been created yet, continuing...")
+
+			try:
+				with open(self.warn_emails, 'r') as file:  # Checks the warning email file to notify moderators if an email on the list is used. For example, a list of professor emails could be loaded.
+					if any(str(arg.lower()) == str(line).strip('\n').lower() for line in file):
+						sendIn = ctx.guild.get_channel(self.notify_id)
+						await sendIn.send(
+							f"Alert! Email on warning list used. Discord ID: {ctx.author.mention}, email `{arg}`.")
+					file.close()
+			except FileNotFoundError:
+				print("Warning list file not found, ignoring.")
+
+			await ctx.send("Sending verification email...")
+			token = random.randint(100000, 999999)
+			with smtplib.SMTP_SSL(self.email_server, self.email_port, context=ssl.create_default_context()) as server:
+				server.login(self.email_from, self.email_password)
+				self.token_list[ctx.author.id] = str(token)
+				self.email_list[ctx.author.id] = arg
+				verify_email = ctx.guild.get_channel(self.channel_id)
+
+				message_text = f"Hello {self.author_name}! Thank you for joining the PSU Discord Server! \n\n" \
+					f"The command to use in the #{verify_email.name} channel is: {self.bot_key}verify {token}\n\n" \
+					f"You can copy and paste that command into the #{verify_email.name} channel to verify. \n\n" \
+					f"This message was sent by the PSU Discord Email Bot. \n" \
+					f"If you did not request to verify, please contact {self.moderator_email} to let us know."
+				message = f"Subject: {self.email_subject}\n\n{message_text}"
+				server.sendmail(self.email_from, arg, message)
+				server.quit()
+
+			await ctx.send(f"Verification email sent {ctx.author.mention}, code is: {token}. Please enter code into correponding modmail channel for manual verification using '=<code>' command")
 
 def setup(bot):
 	bot.add_cog(Verification(bot))
