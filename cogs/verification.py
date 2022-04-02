@@ -71,8 +71,8 @@ class Verification(commands.Cog):
 			f"**Wait for an email to be received**. If you don't receive an email after 5 minutes, try using the email "
 			f"command again. **Send the command provided in the email** as a message in the {verify_email.mention} channel "
 			f"to gain access to the rest of the server."
-			f"\n\n**You can access your webmail at {self.webmail_link}**"
-			f"\nMake sure to check your junk email folder for the message in case it gets sent there."
+			f"\n\nYou can access your webmail at {self.webmail_link}"
+			f"\n**Make sure to check your junk email folder for the message in case it gets sent there.**"
 			f"\n\n**Send messages in the {verify_email.mention} channel to use this "
 			f"bot's commands, not in a DM.**")
 
@@ -164,7 +164,10 @@ class Verification(commands.Cog):
 					server.sendmail(self.email_from, arg, message)
 					server.quit()
 
-				await ctx.send(f"Verification email sent, do `{self.bot_key}verify ######`, where `######` is the token, to verify.")
+				await ctx.send(f"Verification email sent {ctx.author.mention}, do `{self.bot_key}verify ######`, where `######` is the token, to verify. " 
+				f"\n**Please check your spam/junk email folder if you have not received an email!** "
+				f"\nIf no email arrives within 5 minutes, try using `{self.bot_key}email` followed by your PSU email address again in "
+				f"{verify_email.mention}, or DM <@575252669443211264> for help.")
 
 				if self.email_attempts:
 					if ctx.author.id in self.email_attempts:
@@ -198,7 +201,7 @@ class Verification(commands.Cog):
 					if any(self.bot.hashing.check_hash(str(self.email_list[ctx.author.id]), str(line).strip('\n')) for line in file):
 						await ctx.send(
 							"Error! That email has already been used! If you believe this is an error or are trying to "
-							"re-verify, please contact a moderator in this channel or through direct message. Thanks!")
+							"re-verify, please contact a moderator by DMing <@575252669443211264> or through direct message. Thanks!")
 						file.close()
 						return
 					file.close()
