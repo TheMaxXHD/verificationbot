@@ -66,7 +66,7 @@ class Verification(commands.Cog):
 		# The line below contains the verify_help command text output.
 		await ctx.send(
 			f"To use this bot, please use `{self.bot_key}email {self.sample_username}@{self.verify_domain}` in {verify_email.mention} "
-			f"to receive an email with a **4 digit verification token.** Replace `{self.sample_username}@{self.verify_domain}` with "
+			f"to receive an email with a **6 digit verification token.** Replace `{self.sample_username}@{self.verify_domain}` with "
 			f"your own email, keeping in mind that the bot only accepts email addresses with `@{self.verify_domain}` at the end. "
 			f"**Wait for an email to be received**. If you don't receive an email after 5 minutes, try using the email "
 			f"command again. **Send the command provided in the email** as a message in the {verify_email.mention} channel "
@@ -150,7 +150,7 @@ class Verification(commands.Cog):
 				await ctx.send("Sending verification email...")
 				with smtplib.SMTP_SSL(self.email_server, self.email_port, context=ssl.create_default_context()) as server:
 					server.login(self.email_from, self.email_password)
-					token = random.randint(1000, 9999)
+					token = random.randint(100000, 999999)
 					self.token_list[ctx.author.id] = str(token)
 					self.email_list[ctx.author.id] = arg
 					verify_email = ctx.guild.get_channel(self.channel_id)
@@ -164,7 +164,7 @@ class Verification(commands.Cog):
 					server.sendmail(self.email_from, arg, message)
 					server.quit()
 
-				await ctx.send(f"Verification email sent, do `{self.bot_key}verify ####`, where `####` is the token, to verify.")
+				await ctx.send(f"Verification email sent, do `{self.bot_key}verify ######`, where `######` is the token, to verify.")
 
 				if self.email_attempts:
 					if ctx.author.id in self.email_attempts:
