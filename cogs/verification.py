@@ -350,7 +350,7 @@ class Verification(commands.Cog):
 				verify_email = ctx.guild.get_channel(self.channel_id)
 
 				message_text = f"Hello {self.author_name}! Thank you for joining the PSU Discord Server! \n\n" \
-					f"You're six-digit code is:{token}\n\n" \
+					f"Your six-digit code is:{token}\n\n" \
 					f"Please copy and paste this code into your active PSU discord modmail channel to gain full access to the server. WE ARE! \n\n" \
 					f"This message was sent by the PSU Discord Email Bot. \n" \
 					f"If you did not request to verify, please contact {self.moderator_email} to let us know."
